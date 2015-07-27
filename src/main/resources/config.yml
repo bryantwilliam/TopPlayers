@@ -1,0 +1,4 @@
+# 20 ticks = 1 second, 3200 ticks = 1 minute
+sign update rate (in ticks): 3200
+# Time in milliseconds:
+players:
