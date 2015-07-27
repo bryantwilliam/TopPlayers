@@ -1,9 +1,9 @@
 name: TopPlayers
-version: 1.0.0-DEVELOPMENT-SNAPSHOT
+version: 1.0.1-DEVELOPMENT-SNAPSHOT
 main: com.gmail.gogobebe2.topplayerss.TopPlayers
 description: Can create signs that show the top player.
 author: William Bryant (gogobebe2)
 website: gogobebe2@gmail.com
 permissions:
-  topplayers.create:
+  topsign.create:
     default: op

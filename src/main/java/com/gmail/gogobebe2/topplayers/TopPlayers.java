@@ -57,7 +57,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
         String[] lines = event.getLines();
         if (lines[0].equalsIgnoreCase("[top player]")) {
             Player player = event.getPlayer();
-            if (player.hasPermission("topplayers.create")) {
+            if (player.hasPermission("topsign.create")) {
                 int placement;
                 try {
                     placement = Integer.parseInt(lines[1]);
