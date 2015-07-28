@@ -6,10 +6,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class TopPlayers extends JavaPlugin implements Listener {
@@ -21,7 +23,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
 
         // Incase the server was reloaded and no players were kicked.
         for (Player player : Bukkit.getOnlinePlayers()) {
-            new Record(player.getUniqueId(), this);
+            new Record(player, this);
         }
 
         Record.loadRecords(this);
@@ -36,19 +38,31 @@ public class TopPlayers extends JavaPlugin implements Listener {
 
     @EventHandler
     protected void onPlayerJoin(PlayerJoinEvent event) {
-        new Record(event.getPlayer().getUniqueId(), this);
+        new Record(event.getPlayer(), this);
     }
 
     @EventHandler
     protected void onPlayerQuite(PlayerQuitEvent event) {
-        Record record = Record.getRecord(event.getPlayer());
+        Player player = event.getPlayer();
+        saveRecord(player.getUniqueId(), player.getWorld().getUID());
+    }
+
+    private void saveRecord(UUID playerUUID, UUID worldUUID) {
+        Record record = Record.getRecord(playerUUID, worldUUID);
         if (record != null) {
-            record.saveRecord();
+            record.saveRecord(worldUUID);
         }
         else {
-            getLogger().severe(ChatColor.RED + "An error occurred while trying to find " + event.getPlayer().getName()
-                    + "'s record. This should never happen.");
+            getLogger().severe(ChatColor.RED + "An error occurred while trying to find "
+                    + Bukkit.getPlayer(worldUUID).getName() + "'s record. This should never happen.");
         }
+    }
+
+    @EventHandler
+    protected void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
+        Player player = event.getPlayer();
+        saveRecord(player.getUniqueId(), event.getFrom().getUID());
+        new Record(player, this);
     }
 
     @EventHandler
@@ -70,8 +84,8 @@ public class TopPlayers extends JavaPlugin implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-                Record record = Record.getRecord(placement);
-                String name = Bukkit.getPlayer(record.getUUID()).getName();
+                Record record = Record.getRecord(placement, event.getBlock().getWorld().getUID());
+                String name = Bukkit.getPlayer(record.getPlayerUUID()).getName();
                 long time = TimeUnit.MILLISECONDS.toHours(record.getTotalTime());
 
                 event.setLine(0, ChatColor.DARK_BLUE + "Placement " + placement + ":");
