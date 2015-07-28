@@ -2,6 +2,7 @@ package com.gmail.gogobebe2.topplayers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,9 +11,9 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class TopPlayers extends JavaPlugin implements Listener {
     @Override
@@ -28,7 +29,9 @@ public class TopPlayers extends JavaPlugin implements Listener {
 
         Record.loadRecords(this);
 
-        // TODO: create a sign updater Bukkit Runnable.
+        BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+        scheduler.scheduleSyncRepeatingTask(this, new SignUpdater(this)
+                , 0L, getConfig().getLong("sign update rate (in ticks)"));
     }
 
     @Override
@@ -84,18 +87,10 @@ public class TopPlayers extends JavaPlugin implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-                Record record = Record.getRecord(placement, event.getBlock().getWorld().getUID());
-                String name = Bukkit.getPlayer(record.getPlayerUUID()).getName();
-                long time = TimeUnit.MILLISECONDS.toHours(record.getTotalTime());
-
-                event.setLine(0, ChatColor.DARK_BLUE + "Placement " + placement + ":");
-                event.setLine(1, ChatColor.BLUE + "" + placement);
-                event.setLine(2, ChatColor.GOLD + name);
-                event.setLine(3, ChatColor.GREEN + "" + time + "hours");
-                player.sendMessage(ChatColor.GREEN + "Top Player sign has been created for " + name + " as the top "
-                        + placement + " with a time of " + time);
-
-                // TODO: save position of sign in config and create a sign updater.
+                Sign sign = (Sign) event.getBlock();
+                SignUpdater.updateSign(sign, placement);
+                new LocationData(sign.getLocation(), this).saveToConfig("signs." + placement + "." + UUID.randomUUID().toString());
+                player.sendMessage(ChatColor.GREEN + "Top " + placement + " sign has been created!");
             } else {
                 player.sendMessage(ChatColor.RED + "Error! You do not have permission to create head signs!");
             }
