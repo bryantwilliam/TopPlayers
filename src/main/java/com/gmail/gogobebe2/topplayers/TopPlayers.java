@@ -82,12 +82,12 @@ public class TopPlayers extends JavaPlugin implements Listener {
                 int placement;
                 try {
                     placement = Integer.parseInt(lines[1]);
-                    if (placement >= 0) {
+                    if (placement <= 0) {
                         throw new NumberFormatException();
                     }
                 }
                 catch (NumberFormatException eee) {
-                    player.sendMessage(ChatColor.RED + "Error! line 2 does not have a placement number in it or it's below 1s!");
+                    player.sendMessage(ChatColor.RED + "Error! line 2 does not have a placement number in it or it's below 1!");
                     event.setCancelled(true);
                     return;
                 }
