@@ -34,7 +34,7 @@ public class SignUpdater implements Runnable {
 
     protected static void updateSign(Sign sign, int placement) {
         Record record = Record.getRecord(placement, sign.getWorld().getUID());
-        String name = Bukkit.getPlayer(record.getPlayerUUID()).getName();
+        String name = Bukkit.getOfflinePlayer(record.getPlayerUUID()).getName();
         long time = TimeUnit.MILLISECONDS.toHours(record.getTotalTime());
         sign.setLine(0, ChatColor.DARK_BLUE + "Top Player:");
         sign.setLine(1, ChatColor.GOLD + name);
