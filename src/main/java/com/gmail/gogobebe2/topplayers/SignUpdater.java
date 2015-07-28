@@ -36,10 +36,10 @@ public class SignUpdater implements Runnable {
         Record record = Record.getRecord(placement, sign.getWorld().getUID());
         String name = Bukkit.getPlayer(record.getPlayerUUID()).getName();
         long time = TimeUnit.MILLISECONDS.toHours(record.getTotalTime());
-
-        sign.setLine(1, ChatColor.BLUE + "" + placement);
-        sign.setLine(2, ChatColor.GOLD + name);
-        sign.setLine(3, ChatColor.GREEN + "" + time + " hours");
+        sign.setLine(0, ChatColor.DARK_BLUE + "Top Player:");
+        sign.setLine(1, ChatColor.GOLD + name);
+        sign.setLine(2, ChatColor.BLUE + "Placed at:" + placement);
+        sign.setLine(3, ChatColor.GREEN + "With " + time + " hours");
         sign.update();
     }
 }
