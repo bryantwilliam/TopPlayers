@@ -22,12 +22,16 @@ public class TopPlayers extends JavaPlugin implements Listener {
 
         saveDefaultConfig();
 
+        Record.loadRecords(this);
+
         // Incase the server was reloaded and no players were kicked.
         for (Player player : Bukkit.getOnlinePlayers()) {
-            new Record(player, this);
+            if (Record.getRecord(player.getUniqueId(), player.getWorld().getUID()) == null) {
+                new Record(player, this);
+            }
         }
 
-        Record.loadRecords(this);
+        Bukkit.getPluginManager().registerEvents(this, this);
 
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
         scheduler.scheduleSyncRepeatingTask(this, new SignUpdater(this)
