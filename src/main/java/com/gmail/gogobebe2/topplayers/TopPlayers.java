@@ -2,6 +2,7 @@ package com.gmail.gogobebe2.topplayers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -91,8 +92,8 @@ public class TopPlayers extends JavaPlugin implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-                Sign sign = (Sign) event.getBlock().getState();
-                SignUpdater.updateSign(sign, placement);
+                Block sign = event.getBlock();
+                SignUpdater.updateSign((Sign) sign.getState(), placement);
                 new LocationData(sign.getLocation(), this).saveToConfig("signs." + placement + "." + UUID.randomUUID().toString());
                 player.sendMessage(ChatColor.GREEN + "Top " + placement + " sign has been created!");
             } else {

@@ -29,12 +29,12 @@ public class Record {
     }
 
     protected void saveRecord(UUID worldUUID) {
-        plugin.getConfig().set(playerUUID.toString() + "." + worldUUID, this.getTotalTime());
+        plugin.getConfig().set("players." + playerUUID.toString() + "." + worldUUID, this.getTotalTime());
         plugin.saveConfig();
     }
 
     protected long getTotalTime() {
-        String path = playerUUID.toString() + "." + worldUUID.toString();
+        String path = "players." + playerUUID.toString() + "." + worldUUID.toString();
         return (plugin.getConfig().isSet(path) ? plugin.getConfig().getLong(path) : 0)
                 + System.currentTimeMillis() - startTime;
     }
