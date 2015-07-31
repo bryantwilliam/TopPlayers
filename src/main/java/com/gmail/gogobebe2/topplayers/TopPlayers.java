@@ -93,7 +93,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
                     return;
                 }
                 Block sign = event.getBlock();
-                SignUpdater.updateSign((Sign) sign.getState(), placement);
+                SignUpdater.updateSign((Sign) sign.getState(), placement, this);
                 new LocationData(sign.getLocation(), this).saveToConfig("signs." + placement + "." + UUID.randomUUID().toString());
                 player.sendMessage(ChatColor.GREEN + "Top " + placement + " sign has been created!");
             } else {

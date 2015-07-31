@@ -26,7 +26,7 @@ public class SignUpdater implements Runnable {
                     String path = "signs." + placement + "." + signID;
                     BlockState state = new LocationData(path, plugin).getLocation().getBlock().getState();
                     if (state instanceof Sign) {
-                        updateSign((Sign) state, Integer.parseInt(placement));
+                        updateSign((Sign) state, Integer.parseInt(placement), plugin);
                     }
                     else {
                         plugin.getConfig().set(path, null);
@@ -36,7 +36,7 @@ public class SignUpdater implements Runnable {
         }
     }
 
-    protected void updateSign(Sign sign, int placement) {
+    protected static void updateSign(Sign sign, int placement, TopPlayers plugin) {
         Record record = Record.getRecord(placement, sign.getWorld().getUID());
         String name;
         long time;
@@ -71,7 +71,7 @@ public class SignUpdater implements Runnable {
         }
     }
 
-    private String ordinal(int i) {
+    private static String ordinal(int i) {
         int mod100 = i % 100;
         int mod10 = i % 10;
         if(mod10 == 1 && mod100 != 11) {
