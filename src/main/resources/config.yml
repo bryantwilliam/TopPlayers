@@ -3,3 +3,4 @@ sign update rate (in ticks): 3200
 # Player time in milliseconds:
 players:
 signs:
+head identification block radius: 1
