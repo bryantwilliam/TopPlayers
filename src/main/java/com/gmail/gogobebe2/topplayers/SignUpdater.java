@@ -63,7 +63,9 @@ public class SignUpdater implements Runnable {
                     if (block.getType() == Material.SKULL) {
                         Skull skull = (Skull) block.getState();
                         skull.setSkullType(SkullType.PLAYER);
-                        skull.setOwner(name);
+                        if (!skull.setOwner(name)) {
+                            plugin.getLogger().warning("Cannot connect to the web to find " + name + "'s head!");
+                        }
                         skull.update();
                     }
                 }
