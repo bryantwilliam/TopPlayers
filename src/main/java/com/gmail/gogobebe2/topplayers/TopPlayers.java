@@ -94,8 +94,8 @@ public class TopPlayers extends JavaPlugin implements Listener {
                     return;
                 }
                 Block sign = event.getBlock();
-                signUpdater.updateSigns();
                 new LocationData(sign.getLocation(), this).saveToConfig("signs." + placement + "." + UUID.randomUUID().toString());
+                signUpdater.updateSigns();
                 player.sendMessage(ChatColor.GREEN + "Top " + placement + " sign has been created!");
             } else {
                 player.sendMessage(ChatColor.RED + "Error! You do not have permission to create head signs!");
