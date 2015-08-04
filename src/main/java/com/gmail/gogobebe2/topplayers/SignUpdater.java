@@ -20,6 +20,10 @@ public class SignUpdater implements Runnable {
 
     @Override
     public void run() {
+        updateSigns();
+    }
+
+    protected void updateSigns() {
         if (plugin.getConfig().isSet("signs")) {
             for (String placement : plugin.getConfig().getConfigurationSection("signs").getKeys(false)) {
                 for (String signID : plugin.getConfig().getConfigurationSection("signs." + placement).getKeys(false)) {
@@ -36,7 +40,7 @@ public class SignUpdater implements Runnable {
         }
     }
 
-    protected static void updateSign(Sign sign, int placement, TopPlayers plugin) {
+    private static void updateSign(Sign sign, int placement, TopPlayers plugin) {
         Record record = Record.getRecord(placement, sign.getWorld().getUID());
         String name;
         long time;

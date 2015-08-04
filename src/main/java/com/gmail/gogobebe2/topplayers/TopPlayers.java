@@ -3,7 +3,6 @@ package com.gmail.gogobebe2.topplayers;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +16,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import java.util.UUID;
 
 public class TopPlayers extends JavaPlugin implements Listener {
+    SignUpdater signUpdater;
     @Override
     public void onEnable() {
         getLogger().info("Starting up TopPlayers. If you need me to update this plugin, email at gogobebe2@gmail.com");
@@ -34,9 +34,10 @@ public class TopPlayers extends JavaPlugin implements Listener {
 
         Bukkit.getPluginManager().registerEvents(this, this);
 
+        this.signUpdater = new SignUpdater(this);
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-        scheduler.scheduleSyncRepeatingTask(this, new SignUpdater(this)
-                , 0L, getConfig().getLong("sign update rate (in ticks)"));
+        scheduler.scheduleSyncRepeatingTask(this, signUpdater,
+                0L, getConfig().getLong("sign update rate (in ticks)"));
     }
 
     @Override
@@ -93,7 +94,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
                     return;
                 }
                 Block sign = event.getBlock();
-                SignUpdater.updateSign((Sign) sign.getState(), placement, this);
+                signUpdater.updateSigns();
                 new LocationData(sign.getLocation(), this).saveToConfig("signs." + placement + "." + UUID.randomUUID().toString());
                 player.sendMessage(ChatColor.GREEN + "Top " + placement + " sign has been created!");
             } else {
