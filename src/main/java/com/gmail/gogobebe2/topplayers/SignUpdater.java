@@ -60,17 +60,20 @@ public class SignUpdater implements Runnable {
         sign.update();
 
         int radius = plugin.getConfig().getInt("head identification block radius");
-        for (int x = sign.getX() - radius; x < sign.getX() + radius; x++) {
-            for (int y = sign.getY() - radius; y < sign.getY() + radius; y++) {
-                for (int z = sign.getZ() - radius; z < sign.getZ() + radius; z++) {
-                    Block block = sign.getWorld().getBlockAt(x, y, z);
-                    if (block.getType() == Material.SKULL) {
-                        Skull skull = (Skull) block.getState();
-                        skull.setSkullType(SkullType.PLAYER);
-                        if (!skull.setOwner(name)) {
-                            plugin.getLogger().warning("Cannot connect to the web to find " + name + "'s head!");
+        for (int i = 0; i < 2; i++) {
+            for (int x = sign.getX() - radius; x <= sign.getX() + radius; x++) {
+                for (int y = sign.getY() - radius + i; y <= sign.getY() + radius + i; y++) {
+                    for (int z = sign.getZ() - radius; z <= sign.getZ() + radius; z++) {
+                        System.out.println("x,y,z: " + x + ", " + y + ", " + z);
+                        Block block = sign.getWorld().getBlockAt(x, y, z);
+                        if (block.getType() == Material.SKULL) {
+                            Skull skull = (Skull) block.getState();
+                            skull.setSkullType(SkullType.PLAYER);
+                            if (!skull.setOwner(name)) {
+                                plugin.getLogger().warning("Cannot connect to the web to find " + name + "'s head!");
+                            }
+                            skull.update();
                         }
-                        skull.update();
                     }
                 }
             }
