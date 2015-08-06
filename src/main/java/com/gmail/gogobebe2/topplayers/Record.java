@@ -29,7 +29,7 @@ public class Record {
     }
 
     protected void saveRecord() {
-        plugin.getConfig().set("players." + playerUUID.toString() + "." + worldUUID, this.getTotalTime());
+        plugin.getConfig().set("players." + playerUUID.toString() + "." + worldUUID, startTime);
         plugin.saveConfig();
     }
 
