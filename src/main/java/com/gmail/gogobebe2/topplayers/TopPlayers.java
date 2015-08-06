@@ -59,11 +59,11 @@ public class TopPlayers extends JavaPlugin implements Listener {
     private void saveRecord(UUID playerUUID, UUID worldUUID) {
         Record record = Record.getRecord(playerUUID, worldUUID);
         if (record != null) {
-            record.saveRecord(worldUUID);
+            record.saveRecord();
         }
         else {
             getLogger().severe(ChatColor.RED + "An error occurred while trying to find "
-                    + Bukkit.getPlayer(worldUUID).getName() + "'s record. This should never happen.");
+                    + Bukkit.getPlayer(playerUUID).getName() + "'s record. This should never happen.");
         }
     }
 

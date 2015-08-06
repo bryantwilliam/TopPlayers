@@ -11,32 +11,30 @@ import java.util.UUID;
 public class Record {
     private static Set<Record> records = new HashSet<>();
 
-    private long startTime;
     private UUID playerUUID;
     private UUID worldUUID;
     private TopPlayers plugin;
+    private long startTime;
 
     protected Record(Player player, TopPlayers plugin) {
-        this(player, player.getWorld(), plugin);
+        this(player, player.getWorld(), System.currentTimeMillis(), plugin);
     }
 
-    protected Record(Player player, World world, TopPlayers plugin) {
+    protected Record(Player player, World world, long startTime, TopPlayers plugin) {
         this.playerUUID = player.getUniqueId();
         this.worldUUID = world.getUID();
         this.plugin = plugin;
-        this.startTime = System.currentTimeMillis();
+        this.startTime = startTime;
         records.add(this);
     }
 
-    protected void saveRecord(UUID worldUUID) {
+    protected void saveRecord() {
         plugin.getConfig().set("players." + playerUUID.toString() + "." + worldUUID, this.getTotalTime());
         plugin.saveConfig();
     }
 
     protected long getTotalTime() {
-        String path = "players." + playerUUID.toString() + "." + worldUUID.toString();
-        return (plugin.getConfig().isSet(path) ? plugin.getConfig().getLong(path) : 0)
-                + System.currentTimeMillis() - startTime;
+        return System.currentTimeMillis() - startTime;
     }
 
     protected UUID getPlayerUUID() {
@@ -58,6 +56,9 @@ public class Record {
     }
 
     protected static Record getRecord(int placement, UUID worldUUID) {
+        if (placement > records.size()) {
+            return null;
+        }
         Record[] top = new Record[placement];
         for (Record record : records) {
             if (record.getWorldUUID().equals(worldUUID)) {
@@ -76,8 +77,9 @@ public class Record {
         if (plugin.getConfig().isSet("players")) {
             for (String uuid : plugin.getConfig().getConfigurationSection("players").getKeys(false)) {
                 for (String worldUUID : plugin.getConfig().getConfigurationSection("players." + uuid).getKeys(false)) {
+                    long startTime = plugin.getConfig().getLong("players." + uuid + "." + worldUUID);
                     records.add(new Record(Bukkit.getPlayer(UUID.fromString(uuid)),
-                            Bukkit.getWorld(UUID.fromString(worldUUID)), plugin));
+                            Bukkit.getWorld(UUID.fromString(worldUUID)), startTime, plugin));
                 }
             }
         }
