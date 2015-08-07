@@ -14,7 +14,8 @@ public class Record {
     private UUID playerUUID;
     private UUID worldUUID;
     private TopPlayers plugin;
-    private long startTime;
+    private long initialTime;
+    private long serverSessionInitialTime;
 
     protected Record(Player player, TopPlayers plugin) {
         this(player, player.getWorld(), System.currentTimeMillis(), plugin);
@@ -24,17 +25,18 @@ public class Record {
         this.playerUUID = player.getUniqueId();
         this.worldUUID = world.getUID();
         this.plugin = plugin;
-        this.startTime = startTime;
+        this.initialTime = startTime;
+        this.serverSessionInitialTime = System.currentTimeMillis();
         records.add(this);
     }
 
     protected void saveRecord() {
-        plugin.getConfig().set("players." + playerUUID.toString() + "." + worldUUID, startTime);
+        plugin.getConfig().set("players." + playerUUID.toString() + "." + worldUUID, initialTime);
         plugin.saveConfig();
     }
 
     protected long getTotalTime() {
-        return System.currentTimeMillis() - startTime;
+        return initialTime - serverSessionInitialTime;
     }
 
     protected UUID getPlayerUUID() {
@@ -77,9 +79,9 @@ public class Record {
         if (plugin.getConfig().isSet("players")) {
             for (String uuid : plugin.getConfig().getConfigurationSection("players").getKeys(false)) {
                 for (String worldUUID : plugin.getConfig().getConfigurationSection("players." + uuid).getKeys(false)) {
-                    long startTime = plugin.getConfig().getLong("players." + uuid + "." + worldUUID);
+                    long initialTime = plugin.getConfig().getLong("players." + uuid + "." + worldUUID);
                     records.add(new Record(Bukkit.getPlayer(UUID.fromString(uuid)),
-                            Bukkit.getWorld(UUID.fromString(worldUUID)), startTime, plugin));
+                            Bukkit.getWorld(UUID.fromString(worldUUID)), initialTime, plugin));
                 }
             }
         }
