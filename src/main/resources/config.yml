@@ -1,6 +1,6 @@
-# 20 ticks = 1 second, 3200 ticks = 1 minute
-sign update rate (in ticks): 3200
-# Player time in milliseconds:
+# 20 ticks = 1 second, 1200 ticks = 1 minute
+sign update rate (in ticks): 1200
+# Player time in milliseconds using player and world uuids:
 players:
 signs:
 head identification block radius: 1

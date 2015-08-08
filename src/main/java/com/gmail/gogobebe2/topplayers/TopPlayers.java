@@ -3,6 +3,8 @@ package com.gmail.gogobebe2.topplayers;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,6 +18,20 @@ import org.bukkit.scheduler.BukkitScheduler;
 import java.util.UUID;
 
 public class TopPlayers extends JavaPlugin implements Listener {
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (label.equalsIgnoreCase("topplayer")) {
+            if (args[0].equalsIgnoreCase("reload")) {
+                reloadConfig();
+                saveConfig();
+                return true;
+            }
+            sender.sendMessage(ChatColor.RED + "Incorrect usage! Type /topplayer save or /topplayer reload");
+            return true;
+        }
+        return false;
+    }
+
     SignUpdater signUpdater;
     @Override
     public void onEnable() {

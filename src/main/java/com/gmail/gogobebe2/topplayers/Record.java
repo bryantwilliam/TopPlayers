@@ -86,4 +86,8 @@ public class Record {
             }
         }
     }
+
+    protected static Set<Record> getRecords() {
+        return records;
+    }
 }

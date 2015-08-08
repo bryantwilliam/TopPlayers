@@ -9,8 +9,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 
-import java.util.concurrent.TimeUnit;
-
 public class SignUpdater implements Runnable {
     TopPlayers plugin;
 
@@ -50,14 +48,15 @@ public class SignUpdater implements Runnable {
         }
         else {
             name = Bukkit.getOfflinePlayer(record.getPlayerUUID()).getName();
-            time = TimeUnit.MILLISECONDS.toHours(record.getTotalTime());
+            // milliseconds to hours
+            time = record.getTotalTime() / 3600000;
             record.saveRecord();
         }
 
         sign.setLine(0, ChatColor.DARK_BLUE + "Top Player:");
-        sign.setLine(1, ChatColor.GOLD + name);
+        sign.setLine(1, ChatColor.GREEN + name);
         sign.setLine(2, ChatColor.BLUE + "Placed " + ordinal(placement));
-        sign.setLine(3, ChatColor.GREEN + "With " + time + " hours");
+        sign.setLine(3, ChatColor.AQUA + "With " + time + " minutes");
         sign.update();
 
         int radius = plugin.getConfig().getInt("head identification block radius");
