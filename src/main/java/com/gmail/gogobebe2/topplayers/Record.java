@@ -1,7 +1,5 @@
 package com.gmail.gogobebe2.topplayers;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -16,12 +14,12 @@ public class Record implements Comparable<Record> {
     private long serverSessionInitialTime;
 
     protected Record(Player player, TopPlayers plugin) {
-        this(player, player.getWorld(), 0, plugin);
+        this(player.getUniqueId(), player.getWorld().getUID(), 0, plugin);
     }
 
-    protected Record(Player player, World world, long accumulatedTime, TopPlayers plugin) {
-        this.playerUUID = player.getUniqueId();
-        this.worldUUID = world.getUID();
+    protected Record(UUID playerUUID, UUID worldUUID, long accumulatedTime, TopPlayers plugin) {
+        this.playerUUID = playerUUID;
+        this.worldUUID = worldUUID;
         this.plugin = plugin;
         this.accumulatedTime = accumulatedTime;
         this.serverSessionInitialTime = System.currentTimeMillis();
@@ -68,8 +66,8 @@ public class Record implements Comparable<Record> {
             for (String uuid : plugin.getConfig().getConfigurationSection("players").getKeys(false)) {
                 for (String worldUUID : plugin.getConfig().getConfigurationSection("players." + uuid).getKeys(false)) {
                     long accumulatedTime = plugin.getConfig().getLong("players." + uuid + "." + worldUUID);
-                    records.add(new Record(Bukkit.getPlayer(UUID.fromString(uuid)),
-                            Bukkit.getWorld(UUID.fromString(worldUUID)), accumulatedTime, plugin));
+                    records.add(new Record(UUID.fromString(uuid),
+                            UUID.fromString(worldUUID), accumulatedTime, plugin));
                 }
             }
         }
