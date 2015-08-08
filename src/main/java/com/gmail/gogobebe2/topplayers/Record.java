@@ -1,7 +1,5 @@
 package com.gmail.gogobebe2.topplayers;
 
-import org.bukkit.entity.Player;
-
 import java.util.*;
 
 public class Record implements Comparable<Record> {
@@ -12,21 +10,34 @@ public class Record implements Comparable<Record> {
     private TopPlayers plugin;
     private long accumulatedTime;
     private long serverSessionInitialTime;
+    private boolean isRecording;
 
-    protected Record(Player player, TopPlayers plugin) {
-        this(player.getUniqueId(), player.getWorld().getUID(), 0, plugin);
-    }
-
-    protected Record(UUID playerUUID, UUID worldUUID, long accumulatedTime, TopPlayers plugin) {
+    protected Record(UUID playerUUID, UUID worldUUID, TopPlayers plugin) {
         this.playerUUID = playerUUID;
         this.worldUUID = worldUUID;
         this.plugin = plugin;
-        this.accumulatedTime = accumulatedTime;
-        this.serverSessionInitialTime = System.currentTimeMillis();
+        this.accumulatedTime = 0;
+        if (plugin.getConfig().isSet("players." + playerUUID + "." + worldUUID)) {
+            this.accumulatedTime = plugin.getConfig().getLong("players." + playerUUID + "." + worldUUID);
+        }
         records.add(this);
     }
 
-    protected void saveRecord() {
+    protected void startRecording() {
+        if (!isRecording) {
+            this.isRecording = true;
+            this.serverSessionInitialTime = System.currentTimeMillis();
+        }
+    }
+
+    protected void stopRecording() {
+        if (isRecording) {
+            this.isRecording = false;
+            this.saveRecord();
+        }
+    }
+
+    private void saveRecord() {
         plugin.getConfig().set("players." + playerUUID.toString() + "." + worldUUID, getNewAccumulatedTime());
         plugin.saveConfig();
     }
@@ -65,9 +76,7 @@ public class Record implements Comparable<Record> {
         if (plugin.getConfig().isSet("players")) {
             for (String uuid : plugin.getConfig().getConfigurationSection("players").getKeys(false)) {
                 for (String worldUUID : plugin.getConfig().getConfigurationSection("players." + uuid).getKeys(false)) {
-                    long accumulatedTime = plugin.getConfig().getLong("players." + uuid + "." + worldUUID);
-                    records.add(new Record(UUID.fromString(uuid),
-                            UUID.fromString(worldUUID), accumulatedTime, plugin));
+                    new Record(UUID.fromString(uuid), UUID.fromString(worldUUID), plugin);
                 }
             }
         }

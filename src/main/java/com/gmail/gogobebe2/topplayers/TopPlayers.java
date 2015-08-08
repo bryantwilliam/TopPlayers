@@ -45,7 +45,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
         // Incase the server was reloaded and no players were kicked.
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (Record.getRecord(player.getUniqueId(), player.getWorld().getUID()) == null) {
-                new Record(player, this);
+                new Record(player.getUniqueId(), player.getWorld().getUID(), this);
             }
         }
 
@@ -64,7 +64,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
 
     @EventHandler
     protected void onPlayerJoin(PlayerJoinEvent event) {
-        new Record(event.getPlayer(), this);
+        new Record(event.getPlayer().getUniqueId(), event.getPlayer().getWorld().getUID(), this).startRecording();
     }
 
     @EventHandler
@@ -76,7 +76,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
     private void saveRecord(UUID playerUUID, UUID worldUUID) {
         Record record = Record.getRecord(playerUUID, worldUUID);
         if (record != null) {
-            record.saveRecord();
+            record.stopRecording();
         }
         else {
             getLogger().severe(ChatColor.RED + "An error occurred while trying to find "
@@ -88,7 +88,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
     protected void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
         saveRecord(player.getUniqueId(), event.getFrom().getUID());
-        new Record(player, this);
+        new Record(player.getUniqueId(), player.getWorld().getUID(), this).startRecording();
     }
 
     @EventHandler

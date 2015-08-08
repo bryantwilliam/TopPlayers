@@ -51,7 +51,6 @@ public class SignUpdater implements Runnable {
             name = Bukkit.getOfflinePlayer(record.getPlayerUUID()).getName();
             // milliseconds to hours
             time = record.getNewAccumulatedTime() / 3600000;
-            record.saveRecord();
         }
 
         sign.setLine(0, ChatColor.DARK_BLUE + "Top Player:");
