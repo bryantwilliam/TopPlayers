@@ -1,5 +1,8 @@
 package com.gmail.gogobebe2.topplayers;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+
 import java.util.*;
 
 public class Record implements Comparable<Record> {
@@ -10,40 +13,39 @@ public class Record implements Comparable<Record> {
     private TopPlayers plugin;
     private long accumulatedTime;
     private long serverSessionInitialTime;
-    private boolean isRecording;
+    private boolean active;
 
-    protected Record(UUID playerUUID, UUID worldUUID, TopPlayers plugin) {
+    protected Record(UUID playerUUID, UUID worldUUID, boolean active, TopPlayers plugin) {
         this.playerUUID = playerUUID;
         this.worldUUID = worldUUID;
         this.plugin = plugin;
+        this.active = active;
         this.accumulatedTime = 0;
         if (plugin.getConfig().isSet("players." + playerUUID + "." + worldUUID)) {
             this.accumulatedTime = plugin.getConfig().getLong("players." + playerUUID + "." + worldUUID);
         }
+        if (active) openRecord();
         records.add(this);
     }
 
-    protected void startRecording() {
-        if (!isRecording) {
-            this.isRecording = true;
+    protected void closeAndSaveRecord() {
+        if (this.active) {
+            this.active = false;
+            plugin.getConfig().set("players." + playerUUID.toString() + "." + worldUUID, getNewAccumulatedTime());
+            plugin.saveConfig();
+        }
+    }
+
+    protected void openRecord() {
+        if (!active) {
+            active = true;
             this.serverSessionInitialTime = System.currentTimeMillis();
         }
     }
 
-    protected void stopRecording() {
-        if (isRecording) {
-            this.isRecording = false;
-            this.saveRecord();
-        }
-    }
-
-    private void saveRecord() {
-        plugin.getConfig().set("players." + playerUUID.toString() + "." + worldUUID, getNewAccumulatedTime());
-        plugin.saveConfig();
-    }
-
     protected long getNewAccumulatedTime() {
-        return accumulatedTime + System.currentTimeMillis() - serverSessionInitialTime;
+        if (active) return accumulatedTime + System.currentTimeMillis() - serverSessionInitialTime;
+        else return accumulatedTime;
     }
 
     protected UUID getPlayerUUID() {
@@ -76,7 +78,8 @@ public class Record implements Comparable<Record> {
         if (plugin.getConfig().isSet("players")) {
             for (String uuid : plugin.getConfig().getConfigurationSection("players").getKeys(false)) {
                 for (String worldUUID : plugin.getConfig().getConfigurationSection("players." + uuid).getKeys(false)) {
-                    new Record(UUID.fromString(uuid), UUID.fromString(worldUUID), plugin);
+                    OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
+                    new Record(player.getUniqueId(), UUID.fromString(worldUUID), player.isOnline(), plugin);
                 }
             }
         }

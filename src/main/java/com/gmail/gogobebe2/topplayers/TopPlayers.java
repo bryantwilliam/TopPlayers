@@ -44,9 +44,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
 
         // Incase the server was reloaded and no players were kicked.
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (Record.getRecord(player.getUniqueId(), player.getWorld().getUID()) == null) {
-                new Record(player.getUniqueId(), player.getWorld().getUID(), this);
-            }
+            createOpenRecord(player.getUniqueId(), player.getWorld().getUID());
         }
 
         Bukkit.getPluginManager().registerEvents(this, this);
@@ -64,7 +62,8 @@ public class TopPlayers extends JavaPlugin implements Listener {
 
     @EventHandler
     protected void onPlayerJoin(PlayerJoinEvent event) {
-        new Record(event.getPlayer().getUniqueId(), event.getPlayer().getWorld().getUID(), this).startRecording();
+        Player player = event.getPlayer();
+        createOpenRecord(player.getUniqueId(), player.getWorld().getUID());
     }
 
     @EventHandler
@@ -73,10 +72,16 @@ public class TopPlayers extends JavaPlugin implements Listener {
         saveRecord(player.getUniqueId(), player.getWorld().getUID());
     }
 
+    private void createOpenRecord(UUID playerUUID, UUID worldUUID) {
+        if (Record.getRecord(playerUUID, worldUUID) == null) {
+            new Record(playerUUID, worldUUID, true, this);
+        }
+    }
+
     private void saveRecord(UUID playerUUID, UUID worldUUID) {
         Record record = Record.getRecord(playerUUID, worldUUID);
         if (record != null) {
-            record.stopRecording();
+            record.closeAndSaveRecord();
         }
         else {
             getLogger().severe(ChatColor.RED + "An error occurred while trying to find "
@@ -88,7 +93,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
     protected void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
         saveRecord(player.getUniqueId(), event.getFrom().getUID());
-        new Record(player.getUniqueId(), player.getWorld().getUID(), this).startRecording();
+        createOpenRecord(player.getUniqueId(), player.getWorld().getUID());
     }
 
     @EventHandler
