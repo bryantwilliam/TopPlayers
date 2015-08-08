@@ -24,9 +24,10 @@ public class TopPlayers extends JavaPlugin implements Listener {
             if (args[0].equalsIgnoreCase("reload")) {
                 reloadConfig();
                 saveConfig();
+                sender.sendMessage(ChatColor.GREEN + "Config reloaded!");
                 return true;
             }
-            sender.sendMessage(ChatColor.RED + "Incorrect usage! Type /topplayer save or /topplayer reload");
+            sender.sendMessage(ChatColor.RED + "Incorrect usage! Type /topplayer reload");
             return true;
         }
         return false;

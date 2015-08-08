@@ -4,11 +4,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
-public class Record {
+public class Record implements Comparable<Record> {
     private static Set<Record> records = new HashSet<>();
 
     private UUID playerUUID;
@@ -61,18 +59,12 @@ public class Record {
         if (placement > records.size()) {
             return null;
         }
-        Record[] top = new Record[placement];
+        List<Record> sortedRecords = new ArrayList<>();
         for (Record record : records) {
-            if (record.getWorldUUID().equals(worldUUID)) {
-                for (int i = 0; i < top.length; i++) {
-                    if (top[i] == null || record.getNewAccumulatedTime() > top[i].getNewAccumulatedTime()) {
-                        top[i] = record;
-                        break;
-                    }
-                }
-            }
+            sortedRecords.add(record);
         }
-        return top[top.length - 1];
+        Collections.sort(sortedRecords);
+        return sortedRecords.get(placement - 1);
     }
 
     protected static void loadRecords(TopPlayers plugin) {
@@ -89,5 +81,10 @@ public class Record {
 
     protected static Set<Record> getRecords() {
         return records;
+    }
+
+    @Override
+    public int compareTo(Record other) {
+        return Long.compare(this.getNewAccumulatedTime(), other.getNewAccumulatedTime());
     }
 }

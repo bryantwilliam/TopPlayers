@@ -32,6 +32,7 @@ public class SignUpdater implements Runnable {
                     }
                     else {
                         plugin.getConfig().set(path, null);
+                        plugin.saveConfig();
                     }
                 }
             }
