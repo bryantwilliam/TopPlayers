@@ -56,13 +56,9 @@ public class Record implements Comparable<Record> {
     }
 
     protected static Record getRecord(int placement, UUID worldUUID) {
-        if (placement > records.size()) {
-            return null;
-        }
+        if (placement > records.size()) return null;
         List<Record> sortedRecords = new ArrayList<>();
-        for (Record record : records) {
-            sortedRecords.add(record);
-        }
+        for (Record record : records) if (record.getWorldUUID().equals(worldUUID)) sortedRecords.add(record);
         Collections.sort(sortedRecords);
         return sortedRecords.get(placement - 1);
     }
