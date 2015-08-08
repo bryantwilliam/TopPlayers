@@ -24,8 +24,9 @@ public class Record implements Comparable<Record> {
         if (plugin.getConfig().isSet("players." + playerUUID + "." + worldUUID)) {
             this.accumulatedTime = plugin.getConfig().getLong("players." + playerUUID + "." + worldUUID);
         }
-        if (active) openRecord();
+        if (active) startRecording();
         records.add(this);
+        plugin.getLogger().info("Opened " + Bukkit.getOfflinePlayer(playerUUID).getName() + "'s record.");
     }
 
     protected void closeAndSaveRecord() {
@@ -36,7 +37,7 @@ public class Record implements Comparable<Record> {
         }
     }
 
-    protected void openRecord() {
+    protected void startRecording() {
         if (!active) {
             active = true;
             this.serverSessionInitialTime = System.currentTimeMillis();
@@ -80,6 +81,7 @@ public class Record implements Comparable<Record> {
                 for (String worldUUID : plugin.getConfig().getConfigurationSection("players." + uuid).getKeys(false)) {
                     OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
                     new Record(player.getUniqueId(), UUID.fromString(worldUUID), player.isOnline(), plugin);
+                    plugin.getLogger().info("Loaded " + player.getName() + "'s record.");
                 }
             }
         }

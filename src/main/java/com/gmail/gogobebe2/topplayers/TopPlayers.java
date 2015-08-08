@@ -44,7 +44,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
 
         // Incase the server was reloaded and no players were kicked.
         for (Player player : Bukkit.getOnlinePlayers()) {
-            createOpenRecord(player.getUniqueId(), player.getWorld().getUID());
+            openRecord(player.getUniqueId(), player.getWorld().getUID());
         }
 
         Bukkit.getPluginManager().registerEvents(this, this);
@@ -63,7 +63,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
     @EventHandler
     protected void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        createOpenRecord(player.getUniqueId(), player.getWorld().getUID());
+        openRecord(player.getUniqueId(), player.getWorld().getUID());
     }
 
     @EventHandler
@@ -72,9 +72,13 @@ public class TopPlayers extends JavaPlugin implements Listener {
         saveRecord(player.getUniqueId(), player.getWorld().getUID());
     }
 
-    private void createOpenRecord(UUID playerUUID, UUID worldUUID) {
-        if (Record.getRecord(playerUUID, worldUUID) == null) {
+    private void openRecord(UUID playerUUID, UUID worldUUID) {
+        Record record = Record.getRecord(playerUUID, worldUUID);
+        if (record == null) {
             new Record(playerUUID, worldUUID, true, this);
+        }
+        else {
+            record.startRecording();
         }
     }
 
@@ -93,7 +97,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
     protected void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
         saveRecord(player.getUniqueId(), event.getFrom().getUID());
-        createOpenRecord(player.getUniqueId(), player.getWorld().getUID());
+        openRecord(player.getUniqueId(), player.getWorld().getUID());
     }
 
     @EventHandler
