@@ -64,7 +64,6 @@ public class SignUpdater implements Runnable {
             for (int x = sign.getX() - radius; x <= sign.getX() + radius; x++) {
                 for (int y = sign.getY() - radius + i; y <= sign.getY() + radius + i; y++) {
                     for (int z = sign.getZ() - radius; z <= sign.getZ() + radius; z++) {
-                        System.out.println("x,y,z: " + x + ", " + y + ", " + z);
                         Block block = sign.getWorld().getBlockAt(x, y, z);
                         if (block.getType() == Material.SKULL) {
                             Skull skull = (Skull) block.getState();
