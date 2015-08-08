@@ -49,7 +49,7 @@ public class SignUpdater implements Runnable {
         else {
             name = Bukkit.getOfflinePlayer(record.getPlayerUUID()).getName();
             // milliseconds to hours
-            time = record.getTotalTime() / 3600000;
+            time = record.getNewAccumulatedTime() / 3600000;
             record.saveRecord();
         }
 
