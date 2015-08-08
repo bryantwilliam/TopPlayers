@@ -20,7 +20,7 @@ import java.util.UUID;
 public class TopPlayers extends JavaPlugin implements Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (label.equalsIgnoreCase("topplayer")) {
+        if (label.equalsIgnoreCase("topplayer") && sender.hasPermission("topplayer.admin")) {
             if (args[0].equalsIgnoreCase("reload")) {
                 reloadConfig();
                 saveConfig();

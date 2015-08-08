@@ -14,29 +14,29 @@ public class Record {
     private UUID playerUUID;
     private UUID worldUUID;
     private TopPlayers plugin;
-    private long initialTime;
+    private long accumulatedTime;
     private long serverSessionInitialTime;
 
     protected Record(Player player, TopPlayers plugin) {
-        this(player, player.getWorld(), System.currentTimeMillis(), plugin);
+        this(player, player.getWorld(), 0, plugin);
     }
 
-    protected Record(Player player, World world, long startTime, TopPlayers plugin) {
+    protected Record(Player player, World world, long accumulatedTime, TopPlayers plugin) {
         this.playerUUID = player.getUniqueId();
         this.worldUUID = world.getUID();
         this.plugin = plugin;
-        this.initialTime = startTime;
+        this.accumulatedTime = accumulatedTime;
         this.serverSessionInitialTime = System.currentTimeMillis();
         records.add(this);
     }
 
     protected void saveRecord() {
-        plugin.getConfig().set("players." + playerUUID.toString() + "." + worldUUID, initialTime);
+        plugin.getConfig().set("players." + playerUUID.toString() + "." + worldUUID, getNewAccumulatedTime());
         plugin.saveConfig();
     }
 
-    protected long getTotalTime() {
-        return initialTime - serverSessionInitialTime;
+    protected long getNewAccumulatedTime() {
+        return accumulatedTime + System.currentTimeMillis() - serverSessionInitialTime;
     }
 
     protected UUID getPlayerUUID() {
@@ -65,7 +65,7 @@ public class Record {
         for (Record record : records) {
             if (record.getWorldUUID().equals(worldUUID)) {
                 for (int i = 0; i < top.length; i++) {
-                    if (top[i] == null || record.getTotalTime() > top[i].getTotalTime()) {
+                    if (top[i] == null || record.getNewAccumulatedTime() > top[i].getNewAccumulatedTime()) {
                         top[i] = record;
                         break;
                     }
@@ -79,9 +79,9 @@ public class Record {
         if (plugin.getConfig().isSet("players")) {
             for (String uuid : plugin.getConfig().getConfigurationSection("players").getKeys(false)) {
                 for (String worldUUID : plugin.getConfig().getConfigurationSection("players." + uuid).getKeys(false)) {
-                    long initialTime = plugin.getConfig().getLong("players." + uuid + "." + worldUUID);
+                    long accumulatedTime = plugin.getConfig().getLong("players." + uuid + "." + worldUUID);
                     records.add(new Record(Bukkit.getPlayer(UUID.fromString(uuid)),
-                            Bukkit.getWorld(UUID.fromString(worldUUID)), initialTime, plugin));
+                            Bukkit.getWorld(UUID.fromString(worldUUID)), accumulatedTime, plugin));
                 }
             }
         }
