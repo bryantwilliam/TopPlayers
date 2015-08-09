@@ -45,7 +45,10 @@ public class Record implements Comparable<Record> {
     }
 
     protected long getNewAccumulatedTime() {
-        if (active) return accumulatedTime + System.currentTimeMillis() - serverSessionInitialTime;
+        if (active) {
+            this.accumulatedTime += System.currentTimeMillis() - serverSessionInitialTime;
+            return this.accumulatedTime;
+        }
         else return accumulatedTime;
     }
 
