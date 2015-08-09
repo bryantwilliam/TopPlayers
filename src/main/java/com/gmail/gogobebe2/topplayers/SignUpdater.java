@@ -49,8 +49,8 @@ public class SignUpdater implements Runnable {
         }
         else {
             name = Bukkit.getOfflinePlayer(record.getPlayerUUID()).getName();
-            // milliseconds to hours
-            time = record.getNewAccumulatedTime() / 3600000;
+            // milliseconds to minutes
+            time = record.getNewAccumulatedTime() / 60000;
         }
 
         sign.setLine(0, ChatColor.DARK_BLUE + "Top Player:");
@@ -60,9 +60,9 @@ public class SignUpdater implements Runnable {
         sign.update();
 
         int radius = plugin.getConfig().getInt("head identification block radius");
-        for (int i = 0; i < 2; i++) {
+        for (int yradius = 0; yradius < 2; yradius++) {
             for (int x = sign.getX() - radius; x <= sign.getX() + radius; x++) {
-                for (int y = sign.getY() - radius + i; y <= sign.getY() + radius + i; y++) {
+                for (int y = sign.getY() - radius + yradius; y <= sign.getY() + radius + yradius; y++) {
                     for (int z = sign.getZ() - radius; z <= sign.getZ() + radius; z++) {
                         Block block = sign.getWorld().getBlockAt(x, y, z);
                         if (block.getType() == Material.SKULL) {

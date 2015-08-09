@@ -31,16 +31,16 @@ public class Record implements Comparable<Record> {
 
     protected void closeAndSaveRecord() {
         if (this.active) {
-            this.active = false;
-            plugin.getConfig().set("players." + playerUUID.toString() + "." + worldUUID, getNewAccumulatedTime());
+            plugin.getConfig().set("players." + playerUUID + "." + worldUUID, getNewAccumulatedTime());
             plugin.saveConfig();
+            this.active = false;
         }
     }
 
     protected void startRecording() {
         if (!active) {
-            active = true;
             this.serverSessionInitialTime = System.currentTimeMillis();
+            active = true;
         }
     }
 
