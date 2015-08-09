@@ -24,7 +24,7 @@ public class Record implements Comparable<Record> {
         if (plugin.getConfig().isSet("players." + playerUUID + "." + worldUUID)) {
             this.accumulatedTime = plugin.getConfig().getLong("players." + playerUUID + "." + worldUUID);
         }
-        if (active) startRecording();
+        if (active) this.serverSessionInitialTime = System.currentTimeMillis();
         records.add(this);
         plugin.getLogger().info("Opened " + Bukkit.getOfflinePlayer(playerUUID).getName() + "'s record.");
     }
@@ -85,10 +85,6 @@ public class Record implements Comparable<Record> {
                 }
             }
         }
-    }
-
-    protected static Set<Record> getRecords() {
-        return records;
     }
 
     @Override
