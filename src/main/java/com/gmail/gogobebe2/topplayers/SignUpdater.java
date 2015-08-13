@@ -57,7 +57,7 @@ public class SignUpdater implements Runnable {
         sign.setLine(1, ChatColor.GREEN + name);
         sign.setLine(2, ChatColor.BLUE + "Placed " + ordinal(placement));
         sign.setLine(3, ChatColor.AQUA + "With " + time + " minutes");
-        sign.update();
+        sign.update(true);
 
         int radius = plugin.getConfig().getInt("head identification block radius");
         for (int yradius = 0; yradius < 2; yradius++) {

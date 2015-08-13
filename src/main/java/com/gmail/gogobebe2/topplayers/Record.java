@@ -46,7 +46,9 @@ public class Record implements Comparable<Record> {
 
     protected long getNewAccumulatedTime() {
         if (getPlayer().isOnline()) {
-            this.accumulatedTime += System.currentTimeMillis() - serverSessionInitialTime;
+            long currentTime = System.currentTimeMillis();
+            this.accumulatedTime += currentTime - serverSessionInitialTime;
+            this.serverSessionInitialTime = currentTime;
             return this.accumulatedTime;
         }
         else return accumulatedTime;
