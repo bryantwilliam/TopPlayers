@@ -13,39 +13,39 @@ public class Record implements Comparable<Record> {
     private TopPlayers plugin;
     private long accumulatedTime;
     private long serverSessionInitialTime;
-    private boolean active;
 
-    protected Record(UUID playerUUID, UUID worldUUID, boolean active, TopPlayers plugin) {
+    protected Record(UUID playerUUID, UUID worldUUID, TopPlayers plugin) {
         this.playerUUID = playerUUID;
         this.worldUUID = worldUUID;
         this.plugin = plugin;
-        this.active = active;
         this.accumulatedTime = 0;
         if (plugin.getConfig().isSet("players." + playerUUID + "." + worldUUID)) {
             this.accumulatedTime = plugin.getConfig().getLong("players." + playerUUID + "." + worldUUID);
         }
-        if (active) this.serverSessionInitialTime = System.currentTimeMillis();
+        if (getPlayer().isOnline()) this.serverSessionInitialTime = System.currentTimeMillis();
         records.add(this);
         plugin.getLogger().info("Opened " + Bukkit.getOfflinePlayer(playerUUID).getName() + "'s record.");
     }
 
     protected void closeAndSaveRecord() {
-        if (this.active) {
+        if (getPlayer().isOnline()) {
             plugin.getConfig().set("players." + playerUUID + "." + worldUUID, getNewAccumulatedTime());
             plugin.saveConfig();
-            this.active = false;
         }
     }
 
+    private OfflinePlayer getPlayer() {
+        return Bukkit.getOfflinePlayer(playerUUID);
+    }
+
     protected void startRecording() {
-        if (!active) {
+        if (getPlayer().isOnline()) {
             this.serverSessionInitialTime = System.currentTimeMillis();
-            active = true;
         }
     }
 
     protected long getNewAccumulatedTime() {
-        if (active) {
+        if (getPlayer().isOnline()) {
             this.accumulatedTime += System.currentTimeMillis() - serverSessionInitialTime;
             return this.accumulatedTime;
         }
@@ -83,7 +83,7 @@ public class Record implements Comparable<Record> {
             for (String uuid : plugin.getConfig().getConfigurationSection("players").getKeys(false)) {
                 for (String worldUUID : plugin.getConfig().getConfigurationSection("players." + uuid).getKeys(false)) {
                     OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
-                    new Record(player.getUniqueId(), UUID.fromString(worldUUID), player.isOnline(), plugin);
+                    new Record(player.getUniqueId(), UUID.fromString(worldUUID), plugin);
                     plugin.getLogger().info("Loaded " + player.getName() + "'s record.");
                 }
             }

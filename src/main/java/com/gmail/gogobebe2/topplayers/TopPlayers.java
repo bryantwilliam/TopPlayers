@@ -69,20 +69,20 @@ public class TopPlayers extends JavaPlugin implements Listener {
     @EventHandler
     protected void onPlayerQuite(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        saveRecord(player.getUniqueId(), player.getWorld().getUID());
+        closeAndSaveRecord(player.getUniqueId(), player.getWorld().getUID());
     }
 
     private void openRecord(UUID playerUUID, UUID worldUUID) {
         Record record = Record.getRecord(playerUUID, worldUUID);
         if (record == null) {
-            new Record(playerUUID, worldUUID, true, this);
+            new Record(playerUUID, worldUUID, this);
         }
         else {
             record.startRecording();
         }
     }
 
-    private void saveRecord(UUID playerUUID, UUID worldUUID) {
+    private void closeAndSaveRecord(UUID playerUUID, UUID worldUUID) {
         Record record = Record.getRecord(playerUUID, worldUUID);
         if (record != null) {
             record.closeAndSaveRecord();
@@ -96,7 +96,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
     @EventHandler
     protected void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
-        saveRecord(player.getUniqueId(), event.getFrom().getUID());
+        closeAndSaveRecord(player.getUniqueId(), event.getFrom().getUID());
         openRecord(player.getUniqueId(), player.getWorld().getUID());
     }
 
