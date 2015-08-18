@@ -42,7 +42,7 @@ public class SignUpdater implements Runnable {
     private static void updateSign(Sign sign, int placement, TopPlayers plugin) {
         Record record = Record.getRecord(placement, sign.getWorld().getUID());
         String name;
-        long time;
+        double time;
         if (record == null) {
             name = "null";
             time = -1;
@@ -50,7 +50,7 @@ public class SignUpdater implements Runnable {
         else {
             name = Bukkit.getOfflinePlayer(record.getPlayerUUID()).getName();
             // milliseconds to minutes
-            time = record.getNewAccumulatedTime() / 60000;
+            time = record.getAccumulatedTime() / 60000;
         }
 
         sign.setLine(0, ChatColor.DARK_BLUE + "Top Player:");
