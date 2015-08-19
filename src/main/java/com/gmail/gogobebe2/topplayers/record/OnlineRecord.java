@@ -76,11 +76,7 @@ public class OnlineRecord extends Record {
         @EventHandler
         protected void onPlayerQuit(PlayerQuitEvent event) {
             Player player = event.getPlayer();
-            for (OnlineRecord record : onlineRecords) {
-                if (record.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                    record.closeAndSave();
-                }
-            }
+            getOnlineRecord(player, player.getWorld(), plugin);
         }
 
         @EventHandler
