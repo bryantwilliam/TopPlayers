@@ -1,6 +1,6 @@
 package com.gmail.gogobebe2.topplayers;
 
-import org.bukkit.Bukkit;
+import com.gmail.gogobebe2.topplayers.record.OfflineRecord;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
@@ -40,18 +40,10 @@ public class SignUpdater implements Runnable {
     }
 
     private static void updateSign(Sign sign, int placement, TopPlayers plugin) {
-        Record record = Record.getRecord(placement, sign.getWorld().getUID());
-        String name;
-        double time;
-        if (record == null) {
-            name = "null";
-            time = -1;
-        }
-        else {
-            name = Bukkit.getOfflinePlayer(record.getPlayerUUID()).getName();
-            // milliseconds to minutes
-            time = record.getAccumulatedTime() / 60000;
-        }
+        OfflineRecord offlineRecord = OfflineRecord.getAtPlacement(placement, sign.getWorld(), plugin);
+        String name = offlineRecord.getPlayer().getName();
+        // 60000 miliseconds = 1 minute.
+        double time = offlineRecord.getAccumulatedTime() / 60000;
 
         sign.setLine(0, ChatColor.DARK_BLUE + "Top Player:");
         sign.setLine(1, ChatColor.GREEN + name);

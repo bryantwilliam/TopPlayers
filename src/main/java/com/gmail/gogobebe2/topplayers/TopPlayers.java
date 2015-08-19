@@ -1,5 +1,6 @@
 package com.gmail.gogobebe2.topplayers;
 
+import com.gmail.gogobebe2.topplayers.record.OnlineRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
@@ -9,9 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -34,20 +32,15 @@ public class TopPlayers extends JavaPlugin implements Listener {
     }
 
     SignUpdater signUpdater;
+
     @Override
     public void onEnable() {
         getLogger().info("Starting up TopPlayers. If you need me to update this plugin, email at gogobebe2@gmail.com");
 
         saveDefaultConfig();
 
-        Record.loadRecords(this);
-
-        // Incase the server was reloaded and no players were kicked.
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            openRecord(player.getUniqueId(), player.getWorld().getUID());
-        }
-
         Bukkit.getPluginManager().registerEvents(this, this);
+        Bukkit.getPluginManager().registerEvents(OnlineRecord.getListener(this), this);
 
         this.signUpdater = new SignUpdater(this);
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
@@ -58,46 +51,6 @@ public class TopPlayers extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         getLogger().info("Disabling TopPlayers. If you need me to update this plugin, email at gogobebe2@gmail.com");
-    }
-
-    @EventHandler
-    protected void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        openRecord(player.getUniqueId(), player.getWorld().getUID());
-    }
-
-    @EventHandler
-    protected void onPlayerQuite(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        closeAndSaveRecord(player.getUniqueId(), player.getWorld().getUID());
-    }
-
-    private void openRecord(UUID playerUUID, UUID worldUUID) {
-        Record record = Record.getRecord(playerUUID, worldUUID);
-        if (record == null) {
-            new Record(playerUUID, worldUUID, this);
-        }
-        else {
-            record.startRecording();
-        }
-    }
-
-    private void closeAndSaveRecord(UUID playerUUID, UUID worldUUID) {
-        Record record = Record.getRecord(playerUUID, worldUUID);
-        if (record != null) {
-            record.closeAndSaveRecord();
-        }
-        else {
-            getLogger().severe(ChatColor.RED + "An error occurred while trying to find "
-                    + Bukkit.getPlayer(playerUUID).getName() + "'s record. This should never happen.");
-        }
-    }
-
-    @EventHandler
-    protected void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
-        Player player = event.getPlayer();
-        closeAndSaveRecord(player.getUniqueId(), event.getFrom().getUID());
-        openRecord(player.getUniqueId(), player.getWorld().getUID());
     }
 
     @EventHandler
@@ -113,8 +66,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
                     if (placement <= 0) {
                         throw new NumberFormatException();
                     }
-                }
-                catch (NumberFormatException eee) {
+                } catch (NumberFormatException eee) {
                     player.sendMessage(ChatColor.RED + "Error! line 2 does not have a placement number in it or it's below 1!");
                     event.setCancelled(true);
                     return;
