@@ -15,18 +15,17 @@ public class OfflineRecord extends Record implements Comparable<OfflineRecord> {
         super(player, world, plugin);
     }
 
-    public static OfflineRecord getAtPlacement(int placement, World world, TopPlayers plugin) {
-        List<OfflineRecord> sortedRecords = new ArrayList<>();
-        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            sortedRecords.add(new OfflineRecord(player, world, plugin));
-        }
-        Collections.sort(sortedRecords);
-        return sortedRecords.get(placement - 1);
-    }
-
     @Override
     public int compareTo(OfflineRecord other) {
-        return Long.compare(OnlineRecord.getAccumulatedTime(getPlayer(), getWorld(), getPlugin()),
-                OnlineRecord.getAccumulatedTime(other.getPlayer(), getWorld(), getPlugin()));
+        return Long.compare(getAccumulatedTime(other.getPlayer(), getWorld(), getPlugin()),
+                getAccumulatedTime(getPlayer(), getWorld(), getPlugin()));
+    }
+
+    public static OfflineRecord getAtPlacement(int placement, World world, TopPlayers plugin) {
+        List<OfflineRecord> sortedRecords = new ArrayList<>();
+        for (OfflinePlayer player : Bukkit.getOfflinePlayers())
+            sortedRecords.add(new OfflineRecord(player, world, plugin));
+        Collections.sort(sortedRecords);
+        return sortedRecords.get(placement - 1);
     }
 }

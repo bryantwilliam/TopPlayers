@@ -29,8 +29,7 @@ public class SignUpdater implements Runnable {
                     BlockState state = new LocationData(path, plugin).getLocation().getBlock().getState();
                     if (state instanceof Sign) {
                         updateSign((Sign) state, Integer.parseInt(placement), plugin);
-                    }
-                    else {
+                    } else {
                         plugin.getConfig().set(path, null);
                         plugin.saveConfig();
                     }
@@ -74,11 +73,11 @@ public class SignUpdater implements Runnable {
     private static String ordinal(int i) {
         int mod100 = i % 100;
         int mod10 = i % 10;
-        if(mod10 == 1 && mod100 != 11) {
+        if (mod10 == 1 && mod100 != 11) {
             return i + "st";
-        } else if(mod10 == 2 && mod100 != 12) {
+        } else if (mod10 == 2 && mod100 != 12) {
             return i + "nd";
-        } else if(mod10 == 3 && mod100 != 13) {
+        } else if (mod10 == 3 && mod100 != 13) {
             return i + "rd";
         } else {
             return i + "th";
