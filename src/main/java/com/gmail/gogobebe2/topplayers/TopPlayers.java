@@ -56,6 +56,7 @@ public class TopPlayers extends JavaPlugin implements Listener {
     @EventHandler
     protected void onSignChange(SignChangeEvent event) {
         if (event.isCancelled()) return;
+
         String[] lines = event.getLines();
         if (lines[0].equalsIgnoreCase("[top player]")) {
             Player player = event.getPlayer();
