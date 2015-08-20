@@ -76,7 +76,7 @@ public class OnlineRecord extends Record {
         @EventHandler
         protected void onPlayerQuit(PlayerQuitEvent event) {
             Player player = event.getPlayer();
-            getOnlineRecord(player, player.getWorld(), plugin);
+            getOnlineRecord(player, player.getWorld(), plugin).closeAndSave();
         }
 
         @EventHandler
