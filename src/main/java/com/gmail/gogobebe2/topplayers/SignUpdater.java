@@ -41,13 +41,13 @@ public class SignUpdater implements Runnable {
     private static void updateSign(Sign sign, int placement, TopPlayers plugin) {
         OfflineRecord offlineRecord = OfflineRecord.getAtPlacement(placement, sign.getWorld(), plugin);
         String name = offlineRecord.getPlayer().getName();
-        // 60000 miliseconds = 1 minute.
-        double time = offlineRecord.getAccumulatedTime() / 60000;
+        // 3600000 miliseconds = 1 hour.
+        double time = offlineRecord.getAccumulatedTime() / 3600000;
 
         sign.setLine(0, ChatColor.DARK_BLUE + "Top Player:");
         sign.setLine(1, ChatColor.GREEN + name);
         sign.setLine(2, ChatColor.BLUE + "Placed " + ordinal(placement));
-        sign.setLine(3, ChatColor.AQUA + "With " + time + " minutes");
+        sign.setLine(3, ChatColor.AQUA + "With " + time + " hours");
         sign.update(true);
 
         int radius = plugin.getConfig().getInt("head identification block radius");

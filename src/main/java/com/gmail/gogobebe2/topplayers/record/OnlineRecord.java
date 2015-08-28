@@ -26,6 +26,7 @@ public class OnlineRecord extends Record {
 
     private void closeAndSave() {
         getPlugin().getConfig().set("players." + getPlayer().getUniqueId() + "." + getWorld().getUID(), getAccumulatedTime());
+        getPlugin().saveConfig();
         onlineRecords.remove(this);
     }
 
